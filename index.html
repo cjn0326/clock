@@ -3,22 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="shortcut icon" href="images/resizeApi%20(5).png" type="image/x-icon">
     <style>
         body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td {
             margin: 0;
             padding: 0
         }
+
+        #canvas {
+            background-image: url(images/bg.jpg);
+            display: block;
+            margin: 50px auto;
+            /*background-color: hotpink;*/
+        }
     </style>
 </head>
 <body>
 <canvas id="canvas" width="900" height="600" style="border: 1px solid #000;">
-  你的浏览器不支持canvas，请升级浏览器.浏览器不支持，显示此行文本
+    你的浏览器不支持canvas，请升级浏览器.浏览器不支持，显示此行文本
 </canvas>
 <script>
-     //获取canvas标签
+    //获取canvas标签
     var canvas = document.getElementById('canvas');
-     //获取上下文
+    //获取上下文
     var ctx = canvas.getContext('2d');
+    function drawBackground() {
+        //绘制背景
+        ctx.beginPath();
+        ctx.lineWidth = 10;
+        ctx.strokeStyle = "orange";
+        ctx.arc(canvas.width / 2, canvas.height / 2, 250, 0, 2 * Math.PI);
+        ctx.stroke();
+        //绘制刻度
+        for (var i = 0; i < 12; i++) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.lineWidth = 8;
+            ctx.strokeStyle = "blue";
+            //移动坐标点
+            ctx.translate(450, 300);
+            //旋转
+            ctx.rotate(i * 30 * Math.PI / 180);
+            ctx.moveTo(0, -180);
+            ctx.lineTo(0, -200);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        //绘制分刻度
+        for (var i = 0; i < 60; i++) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = "blue";
+            //位移
+            ctx.translate(450, 300);
+//旋转(360 / 60 = 6)
+            ctx.rotate(i * 6 * Math.PI / 180);
+            ctx.moveTo(0, 190);
+            ctx.lineTo(0, 200);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+
+        //数字
+        var num = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+        ctx.font = "25px'宋体'";
+        ctx.lineWidth = 2;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'center';
+        ctx.strokeStyle = "chartreuse";
+        for (var i = 0; i < num.length; i++) {
+            var obj = num[i];
+            var textX = 450 + 160 * Math.cos((i * 30 - 60) * Math.PI / 180);
+            var textY = 310 + 160 * Math.sin((i * 30 - 60) * Math.PI / 180);
+            ctx.beginPath();
+            ctx.strokeText(obj, textX, textY);
+        }
+        //绘制文字
+        ctx.save();
+        ctx.beginPath();
+        ctx.font = "40px'宋体'";
+        ctx.lineWidth = 2;
+        ctx.fillText("中国时间",450,260);
+        ctx.restore();
+
+        //绘制文字
+        ctx.save();
+        ctx.beginPath();
+        ctx.font = "40px'宋体'";
+        ctx.lineWidth = 2;
+        ctx.fillText("TIME",450,400);
+        ctx.restore();
+
+    }
+    ;
+
+    function drawClock() {
+        //清屏
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        //绘制背景
+        drawBackground();
+        //获取当前时间
+        var date = new Date();
+        //秒
+        var seconds = date.getSeconds();
+        //分
+        var mins = date.getMinutes();
+        //小时
+        var hours = date.getHours();
+        //时针偏移
+        hours = hours + mins / 60;
+        //进制判断
+        hours = hours > 12 ? hours - 12 : hours;
+        //根据当前时间绘制时针
+        //时针
+        ctx.save();
+        ctx.lineWidth = 10;
+        ctx.strokeStyle = "black";
+        ctx.translate(450, 300);
+        ctx.rotate(hours * 30 * Math.PI / 180);
+        ctx.beginPath();
+        ctx.moveTo(0, -110);
+        ctx.lineTo(0, 10);
+        ctx.stroke();
+        ctx.restore();
+        //分针
+        ctx.save();
+        ctx.lineWidth = 8;
+        ctx.strokeStyle = "black";
+        ctx.translate(450, 300);
+        ctx.rotate(mins * 6 * Math.PI / 180);
+        ctx.beginPath();
+        ctx.moveTo(0, -140);
+        ctx.lineTo(0, 10);
+        ctx.stroke();
+        ctx.restore();
+
+        //秒针
+        ctx.save();
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = "red";
+        ctx.translate(450, 300);
+        ctx.rotate(seconds * 6 * Math.PI / 180);
+        ctx.beginPath();
+        ctx.moveTo(0, -180);
+        ctx.lineTo(0, 25);
+        ctx.stroke();
+        ctx.restore();
+
+    }
+    //调用函数
+    drawClock();
+    //开启定时器
+    setInterval(drawClock, 1000);
 
 
 </script>
